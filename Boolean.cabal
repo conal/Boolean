@@ -1,7 +1,7 @@
 Name:                Boolean
-Version:             0.0.0
+Version:             0.0.1
 Cabal-Version:       >= 1.2
-Synopsis:            Generalized boolean ops
+Synopsis:            Generalized booleans
 Category:            Data
 Description:
   Some classes for generalized boolean operations.

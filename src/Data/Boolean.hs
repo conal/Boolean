@@ -28,11 +28,11 @@
 module Data.Boolean
   (
     Boolean(..),IfB(..), boolean, cond, crop
-  , EqB(..), OrdB(..)
+  , EqB(..), OrdB(..), minB, maxB
   ) where
 
 import Data.Monoid (Monoid,mempty)
-import Control.Applicative (Applicative(..),liftA2,liftA3)
+import Control.Applicative (Applicative(pure),liftA2,liftA3)
 
 
 {--------------------------------------------------------------------
@@ -87,6 +87,14 @@ class Boolean bool => OrdB bool a | a -> bool where
   u >*  v = v <* u
   u >=* v = notB (u <* v)
   u <=* v = v >=* u
+
+-- | Variant of 'min' using 'ifB' and '(<=*)'
+minB :: (IfB bool a, OrdB bool a) => a -> a -> a
+u `minB` v = ifB (u <=* v) u v
+
+-- | Variant of 'max' using 'ifB' and '(>=*)'
+maxB :: (IfB bool a, OrdB bool a) => a -> a -> a
+u `maxB` v = ifB (u >=* v) u v
 
 {--------------------------------------------------------------------
     Some instances
