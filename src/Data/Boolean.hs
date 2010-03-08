@@ -67,7 +67,7 @@ boolean t e bool = ifB bool t e
 cond :: (Applicative f, IfB bool a) => f bool -> f a -> f a -> f a
 cond = liftA3 ifB
 
--- | Crop a function, filling in 'mempty' where the test yeis false.
+-- | Crop a function, filling in 'mempty' where the test yields false.
 crop :: (Applicative f, Monoid (f a), IfB bool a) => f bool -> f a -> f a
 crop r f = cond r f mempty
 
@@ -105,9 +105,9 @@ ife c t e = if c then t else e
 
 -- I'd give the following instances:
 -- 
---     instance IfB  Bool a where ifB = ife
---     instance EqB  Bool a where { (==*) = (==) ; (/=*) = (/=) }
---     instance OrdB Bool a where { (<*) = (<) ; (<=*) = (<=)}
+--     instance          IfB  Bool a where ifB = ife
+--     instance Eq  a => EqB  Bool a where { (==*) = (==) ; (/=*) = (/=) }
+--     instance Ord a => OrdB Bool a where { (<*) = (<) ; (<=*) = (<=)}
 -- 
 -- Sadly, doing so would break the a->bool fundep, which is needed elsewhere
 -- for disambiguation.  So use the instances above as templates, filling
