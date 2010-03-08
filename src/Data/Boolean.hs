@@ -148,7 +148,7 @@ instance IfB bool a => IfB (z -> bool) (z -> a) where
 instance EqB  bool a => EqB  (z -> bool) (z -> a) where
   { (==*) = liftA2 (==*) ; (/=*) = liftA2 (/=*) }
 instance OrdB bool a => OrdB (z -> bool) (z -> a) where
-  { (<*) = liftA2(<*) ; (<=*) = liftA2(<=*) }
+  { (<*) = liftA2 (<*) ; (<=*) = liftA2 (<=*) }
 
 
 {-
