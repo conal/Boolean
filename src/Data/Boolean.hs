@@ -59,7 +59,7 @@ instance Boolean Bool where
 class Boolean bool => IfB bool a | a -> bool where
   ifB  :: bool -> a -> a -> a
 
--- | Expression-lifted conditional with condition last
+-- | 'ifB' with condition last
 boolean :: IfB bool a => a -> a -> bool -> a
 boolean t e bool = ifB bool t e
 
@@ -67,10 +67,9 @@ boolean t e bool = ifB bool t e
 cond :: (Applicative f, IfB bool a) => f bool -> f a -> f a -> f a
 cond = liftA3 ifB
 
--- | Crop a function, filling in 'mempty' where the test yields false.
+-- | Generalized cropping, filling in 'mempty' where the test yields false.
 crop :: (Applicative f, Monoid (f a), IfB bool a) => f bool -> f a -> f a
 crop r f = cond r f mempty
-
 
 infix  4  ==*, /=*
 
@@ -120,7 +119,6 @@ instance OrdB Bool Float where { (<*) = (<) ; (<=*) = (<=) }
 
 -- Similarly for other types.  
 
-
 instance (IfB bool p, IfB bool q) => IfB bool (p,q) where
   ifB w (p,q) (p',q') = (ifB w p p', ifB w q q')
 
@@ -130,8 +128,6 @@ instance (IfB bool p, IfB bool q, IfB bool r) => IfB bool (p,q,r) where
 instance (IfB bool p, IfB bool q, IfB bool r, IfB bool s) => IfB bool (p,q,r,s) where
   ifB w (p,q,r,s) (p',q',r',s') =
     (ifB w p p', ifB w q q', ifB w r r', ifB w s s')
-
-
 
 -- Standard pattern for applicative functors:
 

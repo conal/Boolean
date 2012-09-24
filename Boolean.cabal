@@ -1,12 +1,12 @@
 Name:                Boolean
-Version:             0.0.1
+Version:             0.0.2
 Cabal-Version:       >= 1.2
 Synopsis:            Generalized booleans
 Category:            Data
 Description:
   Some classes for generalized boolean operations.
   .
-  Copyright 2009 Conal Elliott; BSD3 license.
+  Copyright 2009-2012 Conal Elliott; BSD3 license.
 Author:              Conal Elliott
 Maintainer:          conal@conal.net
 Package-Url:         http://code.haskell.org/~conal/code/Boolean
