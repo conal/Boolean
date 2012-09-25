@@ -35,7 +35,7 @@
 
 module Data.Boolean
   (
-    Boolean(..),IfB(..), boolean, cond, crop
+    Boolean(..), BooleanOf, IfB(..), boolean, cond, crop
   , EqB(..), OrdB(..), minB, maxB
   ) where
 
