@@ -36,7 +36,7 @@
 module Data.Boolean
   (
     Boolean(..), BooleanOf, IfB(..), boolean, cond, crop
-  , EqB(..), OrdB(..), minB, maxB
+  , EqB(..), OrdB(..), minB, maxB, sort2B
   ) where
 
 import Data.Monoid (Monoid,mempty)
@@ -105,6 +105,10 @@ u `minB` v = ifB (u <=* v) u v
 -- | Variant of 'max' using 'ifB' and '(>=*)'
 maxB :: (IfB a, OrdB a) => a -> a -> a
 u `maxB` v = ifB (u >=* v) u v
+
+-- | Variant of 'min' using 'ifB' and '(<=*)'
+sort2B :: (IfB a, OrdB a) => (a,a) -> (a,a)
+sort2B (u,v) = ifB (u <=* v) (u,v) (v,u)
 
 {--------------------------------------------------------------------
     Instances for Prelude types
