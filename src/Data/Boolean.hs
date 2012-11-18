@@ -106,7 +106,7 @@ u `minB` v = ifB (u <=* v) u v
 maxB :: (IfB a, OrdB a) => a -> a -> a
 u `maxB` v = ifB (u >=* v) u v
 
--- | Variant of 'min' using 'ifB' and '(<=*)'
+-- | Variant of 'min' and 'max' using 'ifB' and '(<=*)'
 sort2B :: (IfB a, OrdB a) => (a,a) -> (a,a)
 sort2B (u,v) = ifB (u <=* v) (u,v) (v,u)
 
