@@ -36,7 +36,7 @@
 module Data.Boolean
   (
     Boolean(..), BooleanOf, IfB(..), boolean, cond, crop
-  , EqB(..), OrdB(..), minB, maxB, sort2B
+  , EqB(..), OrdB(..), RealFloatB(..), minB, maxB, sort2B
   ) where
 
 import Data.Monoid (Monoid,mempty)
@@ -110,6 +110,13 @@ u `maxB` v = ifB (u >=* v) u v
 sort2B :: (IfB a, OrdB a) => (a,a) -> (a,a)
 sort2B (u,v) = ifB (u <=* v) (u,v) (v,u)
 
+class (Boolean (BooleanOf a), RealFrac a, Floating a) => RealFloatB a where
+  isNaN :: a -> BooleanOf a
+  isInfinite :: a -> BooleanOf a
+  isNegativeZero :: a -> BooleanOf a
+  isIEEE :: a -> BooleanOf a
+  atan2 :: a -> a -> a
+
 {--------------------------------------------------------------------
     Instances for Prelude types
 --------------------------------------------------------------------}
@@ -145,6 +152,20 @@ SimpleTy(Bool)
 SimpleTy(Char)
 
 -- Similarly for other simple types.
+
+instance RealFloatB Float where
+  isNaN = Prelude.isNaN
+  isInfinite = Prelude.isInfinite
+  isNegativeZero = Prelude.isNegativeZero
+  isIEEE = Prelude.isIEEE
+  atan2 = Prelude.atan2
+
+instance RealFloatB Double where
+  isNaN = Prelude.isNaN
+  isInfinite = Prelude.isInfinite
+  isNegativeZero = Prelude.isNegativeZero
+  isIEEE = Prelude.isIEEE
+  atan2 = Prelude.atan2
 
 -- TODO: Export these macros for external use. I guess I'd want a .h file as in
 -- the applicative-numbers package.
