@@ -23,10 +23,13 @@ module Data.Boolean.List
   ) where
 
 import Data.Boolean
-
+{-
+-- Does not work because we do not know if we can evaluate the
+-- deep embedded booleans to construct a haskell list again.
 filterB :: (Boolean (BooleanOf a), IfB a) => (a -> BooleanOf a) -> [a] -> [a]
 filterB _ [] = []
 filterB p (x:xs) = ifB (p x) (x : filterB p xs) (filterB p xs)
+  -}
 
 -- | Returns the conjunction of the booleans in the list.
 --   Generalization of 'Data.List.and' with the same behaviour on infinite lists.
