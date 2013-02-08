@@ -34,14 +34,15 @@
 ----------------------------------------------------------------------
 
 module Data.Boolean
-  (
-    Boolean(..), BooleanOf, IfB(..), boolean, cond, crop
-  , EqB(..), OrdB(..), RealFloatB(..), minB, maxB, sort2B
+  ( Boolean(..), BooleanOf, IfB(..)
+  , boolean, cond, crop
+  , EqB(..), OrdB(..)
+  , minB, maxB, sort2B
+  , guardedB, caseB
   ) where
 
 import Data.Monoid (Monoid,mempty)
 import Control.Applicative (Applicative(pure),liftA2,liftA3)
-
 
 {--------------------------------------------------------------------
     Classes
@@ -82,6 +83,16 @@ cond = liftA3 ifB
 crop :: (Applicative f, Monoid (f a), IfB a, bool ~ BooleanOf a) => f bool -> f a -> f a
 crop r f = cond r f mempty
 
+-- | A generalized replacement for guards and chained ifs.
+guardedB :: (IfB b, bool ~ BooleanOf b) => bool -> [(bool,b)] -> b -> b
+guardedB _ [] e = e
+guardedB a ((c,b):l) e = ifB c b (guardedB a l e)
+
+-- | A generalized version of a case like control structure.
+caseB :: (IfB b, bool ~ BooleanOf b) => a -> [(a -> bool, b)] -> b -> b
+caseB _ [] e = e
+caseB x ((p,b):l) e = ifB (p x) b (caseB x l e)
+
 infix  4  ==*, /=*
 
 -- | Types with equality.  Minimum definition: '(==*)'.
@@ -110,12 +121,7 @@ u `maxB` v = ifB (u >=* v) u v
 sort2B :: (IfB a, OrdB a) => (a,a) -> (a,a)
 sort2B (u,v) = ifB (u <=* v) (u,v) (v,u)
 
-class (Boolean (BooleanOf a), RealFrac a, Floating a) => RealFloatB a where
-  isNaN :: a -> BooleanOf a
-  isInfinite :: a -> BooleanOf a
-  isNegativeZero :: a -> BooleanOf a
-  isIEEE :: a -> BooleanOf a
-  atan2 :: a -> a -> a
+
 
 {--------------------------------------------------------------------
     Instances for Prelude types
@@ -152,20 +158,6 @@ SimpleTy(Bool)
 SimpleTy(Char)
 
 -- Similarly for other simple types.
-
-instance RealFloatB Float where
-  isNaN = Prelude.isNaN
-  isInfinite = Prelude.isInfinite
-  isNegativeZero = Prelude.isNegativeZero
-  isIEEE = Prelude.isIEEE
-  atan2 = Prelude.atan2
-
-instance RealFloatB Double where
-  isNaN = Prelude.isNaN
-  isInfinite = Prelude.isInfinite
-  isNegativeZero = Prelude.isNegativeZero
-  isIEEE = Prelude.isIEEE
-  atan2 = Prelude.atan2
 
 -- TODO: Export these macros for external use. I guess I'd want a .h file as in
 -- the applicative-numbers package.
