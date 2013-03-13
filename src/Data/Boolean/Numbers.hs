@@ -30,7 +30,9 @@ module Data.Boolean.Numbers
   , evenB, oddB
   ) where
 
-import Prelude as P
+import Prelude hiding (quotRem,divMod,quot,rem,div,mod,properFraction)
+import qualified Prelude as P
+
 import Control.Arrow (first)
 
 import Data.Boolean
@@ -66,24 +68,24 @@ viaZ = fromInteger . toInteger
 class (Num a, OrdB a) => IntegralB a where
   -- | Integer division truncated towards zero.
   quot :: a -> a -> a
-  quot = fst .: Data.Boolean.Numbers.quotRem
+  quot = fst .: quotRem
   -- | Integer reminder, satisfying:
   --   @(x `quot` y) * y + (x `rem` y) == x@
   rem :: a -> a -> a
-  rem = snd .: Data.Boolean.Numbers.quotRem
+  rem = snd .: quotRem
   -- | Integer division truncated toward negative infinity.
   div :: a -> a -> a
-  div = fst .: Data.Boolean.Numbers.divMod
+  div = fst .: divMod
   -- | Integer modulus, satisfying:
   --   @(x `div` y) * y + (x `mod` y) == x@
   mod :: a -> a -> a
-  mod = snd .: Data.Boolean.Numbers.divMod
+  mod = snd .: divMod
   -- | Simultaneous 'quot' and 'rem'.
   quotRem :: a -> a -> (a,a)
-  quotRem = Data.Boolean.Numbers.quot ## Data.Boolean.Numbers.rem
+  quotRem = quot ## rem
   -- | Simultaneous 'div' and 'mod'.
   divMod :: a -> a -> (a,a)
-  divMod  = Data.Boolean.Numbers.div  ## Data.Boolean.Numbers.mod
+  divMod  = div ## mod
 
 -- | Deep embedded version of 'RealFloat'.
 --   Extracting components of fractions.
@@ -104,7 +106,7 @@ class (Num a, OrdB a, Fractional a) => RealFracB a where
   properFraction :: a -> (a, a)
   -- | @'truncate' x@ returns the integer nearest @x@ between zero and @x@
   truncate :: a -> a
-  truncate = fst . Data.Boolean.Numbers.properFraction
+  truncate = fst . properFraction
   -- | @'round' x@ returns the nearest integer to @x@;
   --   the even integer if @x@ is equidistant between two integers
   round :: a -> a
@@ -147,7 +149,7 @@ class (Boolean (BooleanOf a), RealFracB a, Floating a) => RealFloatB a where
 
 -- | Variant of 'even' for generalized booleans.
 evenB :: (IfB a, EqB a, IntegralB a) => a -> BooleanOf a
-evenB n = n `Data.Boolean.Numbers.rem` 2 ==* 0
+evenB n = n `rem` 2 ==* 0
 
 -- | Variant of 'odd' for generalized booleans.
 oddB :: (IfB a, EqB a, IntegralB a) => a -> BooleanOf a
