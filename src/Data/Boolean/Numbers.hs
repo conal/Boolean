@@ -31,6 +31,8 @@ module Data.Boolean.Numbers
   ) where
 
 import Prelude as P
+import Control.Arrow (first)
+
 import Data.Boolean
 
 {--------------------------------------------------------------------
@@ -38,6 +40,8 @@ import Data.Boolean
 --------------------------------------------------------------------}
 
 infixr 9 .:
+
+-- Double composition. (Aka "result.result". See semantic editor combinators.)
 (.:) :: (c -> c') -> (a -> b -> c) -> (a -> b -> c')
 (.:) = (.).(.)
 
@@ -47,8 +51,8 @@ infixr 9 .:
 viaZ :: (Integral a, Num b) => a -> b
 viaZ = fromInteger . toInteger
 
--- Why not fromIntegral instead of fromInteger . toInteger ? (conal)
--- Why use it at all? (conal)
+-- Why viaZ instead of fromIntegral?
+-- Oh! RealFracB changes method types. A red flag. (conal)
 
 -- -----------------------------------------------------------------------
 -- Generalized Number Class Hirarchy
@@ -134,6 +138,9 @@ class (Boolean (BooleanOf a), RealFracB a, Floating a) => RealFloatB a where
   --   can provide a more accurate implementation.
   atan2 :: a -> a -> a
 
+-- Oh! You've changed the types of the RealFrac methods, not just generalized
+-- them. A red flag. Motivation? (conal)
+
 -- -----------------------------------------------------------------------
 -- Generalized Number Utility Functions
 -- -----------------------------------------------------------------------
@@ -161,16 +168,16 @@ instance IntegralB Integer where
 -- Why not quotRem = P.quotRem etc? (conal)
 
 instance RealFracB Float where
-  properFraction x = (viaZ n, f) where (n, f) = P.properFraction x
-  round   = viaZ . P.round
-  floor   = viaZ . P.floor
-  ceiling = viaZ . P.ceiling
+  properFraction = first viaZ . P.properFraction
+  round          =       viaZ . P.round
+  floor          =       viaZ . P.floor
+  ceiling        =       viaZ . P.ceiling
 
 instance RealFracB Double where
-  properFraction x = (viaZ n, f) where (n, f) = P.properFraction x
-  round   = viaZ . P.round
-  floor   = viaZ . P.floor
-  ceiling = viaZ . P.ceiling
+  properFraction = first viaZ . P.properFraction
+  round          =       viaZ . P.round
+  floor          =       viaZ . P.floor
+  ceiling        =       viaZ . P.ceiling
 
 instance RealFloatB Float where
   isNaN          = P.isNaN
