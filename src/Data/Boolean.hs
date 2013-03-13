@@ -85,12 +85,12 @@ crop r f = cond r f mempty
 
 -- | A generalized replacement for guards and chained ifs.
 guardedB :: (IfB b, bool ~ BooleanOf b) => bool -> [(bool,b)] -> b -> b
-guardedB _ [] e = e
+guardedB _ []        e = e
 guardedB a ((c,b):l) e = ifB c b (guardedB a l e)
 
 -- | A generalized version of a case like control structure.
 caseB :: (IfB b, bool ~ BooleanOf b) => a -> [(a -> bool, b)] -> b -> b
-caseB _ [] e = e
+caseB _ []        e = e
 caseB x ((p,b):l) e = ifB (p x) b (caseB x l e)
 
 infix  4  ==*, /=*
