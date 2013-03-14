@@ -24,7 +24,8 @@
 -- -----------------------------------------------------------------------
 
 module Data.Boolean.Numbers 
-  ( IntegralB(..)
+  ( NumB(..)
+  , IntegralB(..)
   , RealFracB(..)
   , RealFloatB(..)
   , evenB, oddB
