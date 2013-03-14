@@ -3,7 +3,7 @@
 
 -- There are warnings about this in the 'RealFracB' instances for 
 -- 'Float' and 'Double'. They can be ignored.
-{-# OPTIONS_GHC -Wall -fno-warn-type-defaults #-}
+--{-# OPTIONS_GHC -Wall -fno-warn-type-defaults #-}
 
 -- -----------------------------------------------------------------------
 -- |
@@ -28,9 +28,15 @@ module Data.Boolean.Numbers
   , RealFracB(..)
   , RealFloatB(..)
   , evenB, oddB
+  , fromIntegralB
   ) where
 
-import Prelude hiding (quotRem,divMod,quot,rem,div,mod,properFraction)
+import Prelude hiding 
+  ( quotRem, divMod
+  , quot, rem
+  , div, mod
+  , properFraction
+  , fromInteger, toInteger )
 import qualified Prelude as P
 
 import Control.Arrow (first)
@@ -50,22 +56,26 @@ infixr 9 .:
 (##) :: (a -> b -> c) -> (a -> b -> d) -> a -> b -> (c,d)
 (f ## g) x y = (f x y, g x y)
 
-viaZ :: (Integral a, Num b) => a -> b
-viaZ = fromInteger . toInteger
-
--- Why viaZ instead of fromIntegral?
--- Oh! RealFracB changes method types. A red flag. (conal)
-
 -- -----------------------------------------------------------------------
 -- Generalized Number Class Hirarchy
 -- -----------------------------------------------------------------------
+
+-- | An extension of 'Num' that supplies the integer type of a 
+--   given number type and a way to create that number from the 
+--   integer.
+class Num a => NumB a where
+  -- | The accociated integer type of the number.
+  type IntegerOf a
+  -- | Construct the number from the associated integer.
+  fromIntegerB :: IntegerOf a -> a
 
 -- | A deep embedded version of 'Integral'.
 --   Integral numbers, supporting integer division.
 --   
 --   Minimal complete definition is either 'quotRem' and 'divMod'
---   or the other four functions.
-class (Num a, OrdB a) => IntegralB a where
+--   or the other four functions. Besides that 'toIntegerB' always
+--   has to be implemented.
+class (NumB a, OrdB a) => IntegralB a where
   -- | Integer division truncated towards zero.
   quot :: a -> a -> a
   quot = fst .: quotRem
@@ -86,13 +96,15 @@ class (Num a, OrdB a) => IntegralB a where
   -- | Simultaneous 'div' and 'mod'.
   divMod :: a -> a -> (a,a)
   divMod  = div ## mod
+  -- | Create a integer from this integral.
+  toIntegerB :: a -> IntegerOf a
 
 -- | Deep embedded version of 'RealFloat'.
 --   Extracting components of fractions.
 --   
 --   Minimal complete definition: 'properFraction', 
 --   'round', 'floor' and 'ceiling'.
-class (Num a, OrdB a, Fractional a) => RealFracB a where
+class (NumB a, OrdB a, Fractional a) => RealFracB a where
   -- | The function 'properFraction' takes a real fractional number @x@
   -- and returns a pair @(n,f)@ such that @x = n+f@, and:
   -- 
@@ -103,17 +115,17 @@ class (Num a, OrdB a, Fractional a) => RealFracB a where
   --   
   -- The default definitions of the 'ceiling', 'floor', 'truncate'
   -- and 'round' functions are in terms of 'properFraction'.
-  properFraction :: a -> (a, a)
+  properFraction :: (IntegerOf a ~ IntegerOf b, IntegralB b) => a -> (b, a)
   -- | @'truncate' x@ returns the integer nearest @x@ between zero and @x@
-  truncate :: a -> a
+  truncate :: (IntegerOf a ~ IntegerOf b, IntegralB b) => a -> b
   truncate = fst . properFraction
   -- | @'round' x@ returns the nearest integer to @x@;
   --   the even integer if @x@ is equidistant between two integers
-  round :: a -> a
+  round :: (IntegerOf a ~ IntegerOf b, IntegralB b) => a -> b
   -- | @'ceiling' x@ returns the least integer not less than @x@
-  ceiling :: a -> a
+  ceiling :: (IntegerOf a ~ IntegerOf b, IntegralB b) => a -> b
   -- | @'floor' x@ returns the greatest integer not greater than @x@.
-  floor :: a -> a
+  floor :: (IntegerOf a ~ IntegerOf b, IntegralB b) => a -> b
 
 -- | Deep embedded version of 'RealFloat'.
 --   Efficient, machine-independent access to the components of a
@@ -155,31 +167,51 @@ evenB n = n `rem` 2 ==* 0
 oddB :: (IfB a, EqB a, IntegralB a) => a -> BooleanOf a
 oddB = notB . evenB
 
+-- | Variant of 'fromIntegral' for generalized booleans.
+fromIntegralB :: (IntegerOf a ~ IntegerOf b, IntegralB a, NumB b) => a -> b
+fromIntegralB = fromIntegerB . toIntegerB
+
 -- -----------------------------------------------------------------------
 -- Default Class Instances for Basic Types
 -- -----------------------------------------------------------------------
 
+instance NumB Int where
+  type IntegerOf Int = Integer
+  fromIntegerB = P.fromInteger
+
+instance NumB Integer where
+  type IntegerOf Integer = Integer
+  fromIntegerB = id
+
+instance NumB Float where
+  type IntegerOf Float = Integer
+  fromIntegerB = P.fromInteger
+
+instance NumB Double where
+  type IntegerOf Double = Integer
+  fromIntegerB = P.fromInteger
+
 instance IntegralB Int where
   quotRem = P.quot ## P.rem
   divMod  = P.div  ## P.mod
+  toIntegerB = P.toInteger
 
 instance IntegralB Integer where
   quotRem = P.quot ## P.rem
   divMod  = P.div  ## P.mod
-
--- Why not quotRem = P.quotRem etc? (conal)
+  toIntegerB = P.toInteger
 
 instance RealFracB Float where
-  properFraction = first viaZ . P.properFraction
-  round          =       viaZ . P.round
-  floor          =       viaZ . P.floor
-  ceiling        =       viaZ . P.ceiling
+  properFraction = first fromIntegralB . (P.properFraction :: Float -> (Integer, Float))
+  round          = fromIntegralB . (P.round :: Float -> Integer)
+  floor          = fromIntegralB . (P.floor :: Float -> Integer)
+  ceiling        = fromIntegralB . (P.ceiling :: Float -> Integer)
 
 instance RealFracB Double where
-  properFraction = first viaZ . P.properFraction
-  round          =       viaZ . P.round
-  floor          =       viaZ . P.floor
-  ceiling        =       viaZ . P.ceiling
+  properFraction = first fromIntegralB . (P.properFraction :: Double -> (Integer, Double))
+  round          = fromIntegralB . (P.round :: Double -> Integer)
+  floor          = fromIntegralB . (P.floor :: Double -> Integer)
+  ceiling        = fromIntegralB . (P.ceiling :: Double -> Integer)
 
 instance RealFloatB Float where
   isNaN          = P.isNaN
