@@ -1,11 +1,8 @@
-
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FlexibleContexts #-}
 
--- There are warnings about this in the 'RealFracB' instances for 
--- 'Float' and 'Double'. They can be ignored.
-{-# OPTIONS_GHC -Wall #-} -- -fno-warn-type-defaults 
+{-# OPTIONS_GHC -Wall #-}
 
 -- -----------------------------------------------------------------------
 -- |
