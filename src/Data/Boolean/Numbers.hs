@@ -1,9 +1,11 @@
+
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FlexibleContexts #-}
 
 -- There are warnings about this in the 'RealFracB' instances for 
 -- 'Float' and 'Double'. They can be ignored.
---{-# OPTIONS_GHC -Wall -fno-warn-type-defaults #-}
+{-# OPTIONS_GHC -Wall #-} -- -fno-warn-type-defaults 
 
 -- -----------------------------------------------------------------------
 -- |
@@ -149,12 +151,7 @@ class (Boolean (BooleanOf a), RealFracB a, Floating a) => RealFloatB a where
   --   @pi@].  It follows the Common Lisp semantics for the origin when
   --   signed zeroes are supported.  @'atan2' y 1@, with @y@ in a type
   --   that is 'RealFloatB', should return the same value as @'atan' y@.
-  --   A default definition of 'atan2' is provided, but implementors
-  --   can provide a more accurate implementation.
   atan2 :: a -> a -> a
-
--- Oh! You've changed the types of the RealFrac methods, not just generalized
--- them. A red flag. Motivation? (conal)
 
 -- -----------------------------------------------------------------------
 -- Generalized Number Utility Functions
@@ -176,55 +173,48 @@ fromIntegralB = fromIntegerB . toIntegerB
 -- Default Class Instances for Basic Types
 -- -----------------------------------------------------------------------
 
-instance NumB Int where
-  type IntegerOf Int = Integer
-  fromIntegerB = P.fromInteger
+-- | Only for internal use.
+fromInteger' :: (Integer ~ IntegerOf b, NumB b) => Integer -> b
+fromInteger' = fromIntegralB
 
-instance NumB Integer where
-  type IntegerOf Integer = Integer
-  fromIntegerB = id
+#define DefaultNumBInstance(Ty) \
+instance NumB (Ty) where {\
+  type IntegerOf (Ty) = Integer ;\
+  fromIntegerB = P.fromInteger }
 
-instance NumB Float where
-  type IntegerOf Float = Integer
-  fromIntegerB = P.fromInteger
+#define DefaultIntegralBInstance(Ty) \
+instance IntegralB (Ty) where {\
+  quotRem = P.quotRem ;\
+  divMod = P.divMod ;\
+  toIntegerB = P.toInteger }
 
-instance NumB Double where
-  type IntegerOf Double = Integer
-  fromIntegerB = P.fromInteger
+#define DefaultRealFracFloatBInstance(Ty) \
+instance RealFracB (Ty) where {\
+  properFraction = first fromInteger' . P.properFraction ;\
+  round          = fromInteger' . P.round ;\
+  floor          = fromInteger' . P.floor ;\
+  ceiling        = fromInteger' . P.ceiling };\
+instance RealFloatB (Ty) where {\
+  isNaN          = P.isNaN ;\
+  isInfinite     = P.isInfinite ;\
+  isNegativeZero = P.isNegativeZero ;\
+  isIEEE         = P.isIEEE ;\
+  atan2          = P.atan2 }
 
-instance IntegralB Int where
-  quotRem = P.quot ## P.rem
-  divMod  = P.div  ## P.mod
-  toIntegerB = P.toInteger
+DefaultNumBInstance(Int)
+DefaultNumBInstance(Integer)
+DefaultNumBInstance(Float)
+DefaultNumBInstance(Double)
 
-instance IntegralB Integer where
-  quotRem = P.quot ## P.rem
-  divMod  = P.div  ## P.mod
-  toIntegerB = P.toInteger
+DefaultIntegralBInstance(Int)
+DefaultIntegralBInstance(Integer)
 
-instance RealFracB Float where
-  properFraction = first fromIntegralB . (P.properFraction :: Float -> (Integer, Float))
-  round          = fromIntegralB . (P.round :: Float -> Integer)
-  floor          = fromIntegralB . (P.floor :: Float -> Integer)
-  ceiling        = fromIntegralB . (P.ceiling :: Float -> Integer)
+DefaultRealFracFloatBInstance(Float)
+DefaultRealFracFloatBInstance(Double)
 
-instance RealFracB Double where
-  properFraction = first fromIntegralB . (P.properFraction :: Double -> (Integer, Double))
-  round          = fromIntegralB . (P.round :: Double -> Integer)
-  floor          = fromIntegralB . (P.floor :: Double -> Integer)
-  ceiling        = fromIntegralB . (P.ceiling :: Double -> Integer)
 
-instance RealFloatB Float where
-  isNaN          = P.isNaN
-  isInfinite     = P.isInfinite
-  isNegativeZero = P.isNegativeZero
-  isIEEE         = P.isIEEE
-  atan2          = P.atan2
 
-instance RealFloatB Double where
-  isNaN          = P.isNaN
-  isInfinite     = P.isInfinite
-  isNegativeZero = P.isNegativeZero
-  isIEEE         = P.isIEEE
-  atan2          = P.atan2
+
+
+
 
