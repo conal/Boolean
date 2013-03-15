@@ -208,10 +208,3 @@ DefaultIntegralBInstance(Integer)
 
 DefaultRealFracFloatBInstance(Float)
 DefaultRealFracFloatBInstance(Double)
-
-
-
-
-
-
-
