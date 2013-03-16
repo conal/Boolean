@@ -1,6 +1,6 @@
 Name:                Boolean
 Version:             0.2
-Synopsis:            Generalized booleans
+Synopsis:            Generalized booleans and numbers
 Category:            Data
 Cabal-Version:       >= 1.6
 Description:
@@ -9,7 +9,7 @@ Description:
   Up to version 0.0.2, it used MPTCs with functional dependencies.
   My thanks to Andy Gill for suggesting & helping with the change.
   Thanks also to Alex Horsman for Data.Boolean.Overload and to
-  Jan Bracker for  and Data.Boolean.Numbers.
+  Jan Bracker for Data.Boolean.Numbers.
   .
   Copyright 2009-2013 Conal Elliott; BSD3 license.
 Author:              Conal Elliott
