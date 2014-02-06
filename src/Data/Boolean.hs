@@ -1,6 +1,5 @@
-{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FunctionalDependencies
-           , UndecidableInstances, ScopedTypeVariables
-  #-}
+{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FunctionalDependencies,
+             UndecidableInstances, ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies, FlexibleContexts, CPP #-}
 {-# OPTIONS_GHC -Wall #-}
 
