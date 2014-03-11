@@ -1,5 +1,5 @@
 Name:                Boolean
-Version:             0.2
+Version:             0.2.1
 Synopsis:            Generalized booleans and numbers
 Category:            Data
 Cabal-Version:       >= 1.6
