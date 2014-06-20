@@ -33,8 +33,8 @@
 ----------------------------------------------------------------------
 
 module Data.Boolean
-  ( Boolean(..),
-  , anyB, allB,
+  ( Boolean(..)
+  , anyB, allB
   , BooleanOf, IfB(..)
   , boolean, cond, crop
   , EqB(..), OrdB(..)
