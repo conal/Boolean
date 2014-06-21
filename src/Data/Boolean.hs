@@ -34,7 +34,7 @@
 
 module Data.Boolean
   ( Boolean(..)
-  , anyB, allB
+  , anyB, allB, andB, orB
   , BooleanOf, IfB(..)
   , boolean, cond, crop
   , EqB(..), OrdB(..)
@@ -73,6 +73,14 @@ allB p = F.foldr ((&&*) . p) true
 -- | A generalized version of 'Data.Foldable.any'.
 anyB :: (Boolean bool, F.Foldable t) => (a -> bool) -> t a -> bool
 anyB p = F.foldr ((||*) . p) false
+
+-- | A generalized version of 'Data.Foldable.and'.
+andB :: (Boolean bool, F.Foldable t) => t bool -> bool
+andB = allB id
+
+-- | A generalized version of 'Data.Foldable.or'.
+orB :: (Boolean bool, F.Foldable t) => t bool -> bool
+orB = anyB id
 
 -- | 'BooleanOf' computed the boolean analog of a specific type.
 type family BooleanOf a
