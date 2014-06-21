@@ -33,13 +33,16 @@
 ----------------------------------------------------------------------
 
 module Data.Boolean
-  ( Boolean(..), BooleanOf, IfB(..)
+  ( Boolean(..)
+  , anyB, allB, andB, orB
+  , BooleanOf, IfB(..)
   , boolean, cond, crop
   , EqB(..), OrdB(..)
   , minB, maxB, sort2B
   , guardedB, caseB
   ) where
 
+import Data.Foldable as F
 import Data.Monoid (Monoid,mempty)
 import Control.Applicative (Applicative(pure),liftA2,liftA3)
 
@@ -62,6 +65,22 @@ instance Boolean Bool where
   notB  = not
   (&&*) = (&&)
   (||*) = (||)
+
+-- | A generalized version of 'Data.Foldable.all'.
+allB :: (Boolean bool, F.Foldable t) => (a -> bool) -> t a -> bool
+allB p = F.foldr ((&&*) . p) true
+
+-- | A generalized version of 'Data.Foldable.any'.
+anyB :: (Boolean bool, F.Foldable t) => (a -> bool) -> t a -> bool
+anyB p = F.foldr ((||*) . p) false
+
+-- | A generalized version of 'Data.Foldable.and'.
+andB :: (Boolean bool, F.Foldable t) => t bool -> bool
+andB = allB id
+
+-- | A generalized version of 'Data.Foldable.or'.
+orB :: (Boolean bool, F.Foldable t) => t bool -> bool
+orB = anyB id
 
 -- | 'BooleanOf' computed the boolean analog of a specific type.
 type family BooleanOf a
