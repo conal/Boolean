@@ -4,7 +4,7 @@
 
 {-# OPTIONS_GHC -Wall #-}
 
--- -----------------------------------------------------------------------
+-------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Boolean.Numbers
 -- Copyright   :  (c) Jan Bracker 2013
@@ -17,10 +17,11 @@
 -- functions that would break a potential deep embedding are removed
 -- or generalized to support deep embeddings.
 -- 
--- The class hirarchy for numeric types keeps as close as possible to the 
--- 'Prelude' hirarchy. A great part of the default implementation and comments
+-- The class hierarchy for numeric types keeps as close as possible to the 
+-- 'Prelude' hierarchy. A great part of the default implementation and comments
 -- are copied and adopted from 'Prelude'.
--- -----------------------------------------------------------------------
+--
+-------------------------------------------------------------------------
 
 module Data.Boolean.Numbers 
   ( NumB(..)
