@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -Wall #-}
 
 ----------------------------------------------------------------------
@@ -32,6 +33,9 @@ import Prelude hiding
     (==), (/=), 
     (<), (>), (<=), (>=),
     min, max
+#if MIN_VERSION_base(4,8,0)
+    , (<*)
+#endif
   )
 
 (&&) :: Boolean a => a -> a -> a
