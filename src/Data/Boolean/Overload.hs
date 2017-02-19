@@ -38,6 +38,10 @@ import Prelude hiding
 #endif
   )
 
+infix  4  ==, /=, <, <=, >=, >
+infixr 3 &&
+infixr 2 ||
+
 (&&) :: Boolean a => a -> a -> a
 (&&) = (&&*)
 
