@@ -58,6 +58,11 @@ class Boolean b where
   true, false  :: b
   notB         :: b -> b
   (&&*), (||*) :: b -> b -> b
+  impliesB     :: b -> b -> b
+
+  true = notB false
+  notB x = impliesB x false
+  {-# MINIMAL false, (&&*), (||*), impliesB #-}
 
 instance Boolean Bool where
   true  = True
@@ -65,6 +70,7 @@ instance Boolean Bool where
   notB  = not
   (&&*) = (&&)
   (||*) = (||)
+  impliesB x y = if x then y else True
 
 -- | 'BooleanOf' computed the boolean analog of a specific type.
 type family BooleanOf a
@@ -200,6 +206,7 @@ instance Boolean bool => Boolean (z -> bool) where
   notB  = fmap notB
   (&&*) = liftA2 (&&*)
   (||*) = liftA2 (||*)
+  impliesB = liftA2 impliesB
 
 instance IfB a => IfB (z -> a) where
   ifB = cond
