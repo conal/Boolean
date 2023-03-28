@@ -1,25 +1,30 @@
-{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FunctionalDependencies,
-             UndecidableInstances, ScopedTypeVariables #-}
-{-# LANGUAGE TypeFamilies, FlexibleContexts, CPP #-}
+{-# LANGUAGE CPP #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
+
 {-# OPTIONS_GHC -Wall #-}
 
 {-# OPTIONS_GHC -fno-warn-unused-imports #-} -- TEMP
-{-# OPTIONS_GHC -fno-warn-unused-binds   #-} -- TEMP
 
 ----------------------------------------------------------------------
 -- |
 -- Module      :  Data.Boolean
 -- Copyright   :  (c) Conal Elliott 2009-2012
 -- License     :  BSD3
--- 
+--
 -- Maintainer  :  conal@conal.net
 -- Stability   :  experimental
--- 
+--
 -- Some classes for generalized boolean operations.
--- 
+--
 -- In this design, for if-then-else, equality and inequality tests, the
 -- boolean type depends on the value type.
--- 
+--
 -- I also tried using a unary type constructor class.  The class doesn't work
 -- for regular booleans, so generality is lost.  Also, we'd probably have
 -- to wire class constraints in like: @(==*) :: Eq a => f Bool -> f a -> f
@@ -134,11 +139,11 @@ ife :: Bool -> a -> a -> a
 ife c t e = if c then t else e
 
 -- I'd give the following instances:
--- 
+--
 --     instance          IfB a where ifB = ife
 --     instance Eq  a => EqB a where { (==*) = (==) ; (/=*) = (/=) }
 --     instance Ord a => Ord a where { (<*) = (<) ; (<=*) = (<=)}
--- 
+--
 -- Sadly, doing so would break the a->bool fundep, which is needed elsewhere
 -- for disambiguation.  So use the instances above as templates, filling
 -- in specific types for a.
@@ -226,7 +231,7 @@ t2 = ifB (< 0) negate id
 
 --     No instance for (IfB (a -> Bool) (a1 -> a1))
 --       arising from a use of `ifB'
--- 
+--
 -- t2 = ifB (< 0) negate id                -- abs
 
 -}

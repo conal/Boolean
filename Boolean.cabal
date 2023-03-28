@@ -1,8 +1,8 @@
+Cabal-Version:       >= 1.10
 Name:                Boolean
-Version:             0.2.4
+Version:             0.2.4.1
 Synopsis:            Generalized booleans and numbers
 Category:            Data
-Cabal-Version:       >= 1.6
 Description:
   Some classes for generalized boolean operations.
   Starting with 0.1.0, this package uses type families.
@@ -20,18 +20,50 @@ License-File:        COPYING
 Stability:           experimental
 build-type:          Simple
 
+extra-source-files:  CHANGELOG.md
+
+tested-with:
+  GHC == 9.6.1
+  GHC == 9.4.4
+  GHC == 9.2.7
+  GHC == 9.0.2
+  GHC == 8.10.7
+  GHC == 8.8.4
+  GHC == 8.6.5
+  GHC == 8.4.4
+  GHC == 8.2.2
+  GHC == 8.0.2
+  GHC == 7.10.3
+  GHC == 7.8.4
+  GHC == 7.6.3
+  GHC == 7.4.2
+  GHC == 7.2.2
+  GHC == 7.0.4
+
 source-repository head
   type:     git
-  location: git://github.com/conal/Boolean.git
+  location: https://github.com/conal/Boolean.git
 
 Library
   hs-Source-Dirs:      src
-  Extensions:
   Build-Depends:       base<5
   Exposed-Modules:
                        Data.Boolean
                        Data.Boolean.Overload
                        Data.Boolean.Numbers
-  ghc-options:         -Wall
+  Default-Language:    Haskell2010
+  Default-Extensions:
+                       TypeOperators
+  Other-Extensions:
+                       CPP
+                       FlexibleContexts
+                       FlexibleInstances
+                       FunctionalDependencies
+                       MultiParamTypeClasses
+                       ScopedTypeVariables
+                       TypeFamilies
+                       UndecidableInstances
 
---  ghc-prof-options:    -prof -auto-all 
+  ghc-options:         -Wall
+  if impl(ghc >= 8)
+    ghc-options:       -Wcompat
